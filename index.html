@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FeedBoost – bezplatný audit feedu pre Heureku</title>
+<meta name="description" content="Opravím produktový feed vášho e-shopu pre Heureku a Google: parametre, kategórie, názvy a duplicity. Bezplatný audit do 24 hodín, bez zásahu do e-shopu.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --text:#14171c; --muted:#5b6472; --line:#e3e6eb;
+  --accent:#1f6f5c; --accent-soft:#e6f2ee; --warn:#b4541a; --warn-soft:#fbeee6;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#0f1216; --surface:#171b21; --text:#e8ebef; --muted:#9aa3b0; --line:#262c35;
+        --accent:#5cc3a6; --accent-soft:#16302a; --warn:#f0a070; --warn-soft:#33241b;}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-weight:700;letter-spacing:-.01em}
+.logo span{color:var(--accent)}
+nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:15px}
+nav a:hover{color:var(--text)}
+.hero{padding:56px 0 40px}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.15;letter-spacing:-.02em;margin:0 0 16px;max-width:760px}
+.hero p{font-size:19px;color:var(--muted);max-width:640px;margin:0 0 28px}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:10px}
+@media (prefers-color-scheme: dark){.btn{color:#0f1216}}
+.btn:hover{filter:brightness(1.08)}
+.small{font-size:14px;color:var(--muted);margin-top:12px}
+section{padding:44px 0}
+h2{font-size:28px;letter-spacing:-.01em;margin:0 0 8px}
+.lead{color:var(--muted);margin:0 0 28px;max-width:680px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.num{font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--accent);line-height:1.1}
+.num.warn{color:var(--warn)}
+.steps{counter-reset:s;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;position:relative}
+.step::before{counter-increment:s;content:counter(s);display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;align-items:center;justify-content:center;margin-bottom:10px}
+.step h3{margin:0 0 6px;font-size:17px}
+.step p{margin:0;color:var(--muted);font-size:15px}
+.ba{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.ba div{border-radius:10px;padding:14px;font-size:14px}
+.before{background:var(--warn-soft)}
+.after{background:var(--accent-soft)}
+.ba b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.before b{color:var(--warn)} .after b{color:var(--accent)}
+.tag{display:inline-block;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin:3px 4px 0 0;font-size:13px}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);font-size:15px}
+th{color:var(--muted);font-weight:500;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+td.price{font-weight:700;white-space:nowrap}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600}
+details p{color:var(--muted);margin:10px 0 0}
+.cta{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px;text-align:center}
+.cta p{color:var(--muted);max-width:560px;margin:8px auto 22px}
+.mail{font-size:clamp(17px,5vw,22px);font-weight:700;margin:0 0 18px;white-space:nowrap}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{border:0;cursor:pointer;font:inherit;font-weight:600}
+.btn.ghost{background:var(--accent-soft);color:var(--accent)}
+#audit{scroll-margin-top:20px}
+@media (max-width:640px){.actions .btn{width:100%}}
+#audit:target{outline:2px solid var(--accent)}
+
+/* pozadie a dekorácie */
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:22px 22px;background-attachment:fixed}
+:root{--dot:rgba(20,23,28,.07);--blob1:rgba(31,111,92,.18);--blob2:rgba(180,84,26,.12)}
+@media (prefers-color-scheme: dark){:root{--dot:rgba(255,255,255,.06);--blob1:rgba(92,195,166,.14);--blob2:rgba(240,160,112,.10)}}
+header,main,footer{position:relative;z-index:1}
+.bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-blobs span{position:absolute;border-radius:50%;filter:blur(70px)}
+.bg-blobs .b1{width:520px;height:520px;background:var(--blob1);top:-160px;right:-120px}
+.bg-blobs .b2{width:420px;height:420px;background:var(--blob2);top:45%;left:-180px}
+.bg-blobs .b3{width:360px;height:360px;background:var(--blob1);bottom:-140px;right:10%}
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
+.hero-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 20px 50px -20px rgba(0,0,0,.25);transform:rotate(1.5deg)}
+.hc-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+.dots i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-left:5px}
+.hc-score{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:16px}
+.ring{width:92px;height:92px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:8px solid}
+.ring b{font-size:26px;line-height:1}
+.ring small{font-size:11px;color:var(--muted)}
+.r1{border-color:var(--warn-soft);color:var(--warn)}
+.r2{border-color:var(--accent-soft);color:var(--accent)}
+.arrow{font-size:22px;color:var(--muted)}
+.hc-list{list-style:none;margin:0;padding:0}
+.hc-list li{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.hc-list em{margin-left:auto;font-style:normal;font-weight:700;color:var(--accent)}
+.ok{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:12px;align-items:center;justify-content:center;flex:none}
+.card,.step,details,table,.cta{box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card:hover,.step:hover{transform:translateY(-2px);transition:transform .15s}
+@media (max-width:820px){.hero{grid-template-columns:1fr}.hero-card{transform:none;max-width:420px}}
+footer{padding:30px 0 50px;color:var(--muted);font-size:14px;text-align:center}
+footer a{color:var(--muted)}
+@media (max-width:640px){
+  nav{display:none}
+  .hero{padding:32px 0 24px}
+  .ba{grid-template-columns:1fr}
+  th:nth-child(2),td:nth-child(2){display:none}
+  section{padding:32px 0}
+}
+</style>
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+<header>
+  <div class="wrap">
+    <div class="logo">Feed<span>Boost</span></div>
+    <nav><a href="#co-riesim">Čo riešim</a><a href="#ako">Ako to funguje</a><a href="#cena">Cena</a><a href="#otazky">Otázky</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Váš feed pre Heureku pravdepodobne stráca zobrazenia. Pozriem sa naň zadarmo.</h1>
+      <p>Dopĺňam chýbajúce parametre, opravujem kategórie, názvy a duplicity v produktových feedoch pre Heureku a Google. Bez zásahu do e-shopu, všetky zmeny najprv schvaľujete vy.</p>
+      <a class="btn" href="#audit">Chcem bezplatný audit</a>
+      <div class="small">Pošlete mi odkaz na feed a do 24 hodín dostanete audit v PDF.</div>
+    </div>
+    <div class="hero-card" aria-hidden="true">
+      <div class="hc-head"><span>Audit feedu</span><span class="dots"><i></i><i></i><i></i></span></div>
+      <div class="hc-score">
+        <div class="ring r1"><b>58</b><small>teraz</small></div>
+        <div class="arrow">→</div>
+        <div class="ring r2"><b>94</b><small>po úprave</small></div>
+      </div>
+      <ul class="hc-list">
+        <li><span class="ok">✓</span>Parametre doplnené z popisov<em>3 334</em></li>
+        <li><span class="ok">✓</span>Kategórie podľa aktuálnej Heureky<em>231</em></li>
+        <li><span class="ok">✓</span>Duplicitné ID opravené<em>109</em></li>
+        <li><span class="ok">✓</span>Názvy bez VEĽKÝCH písmen<em>450</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <section id="co-riesim">
+    <h2>Čo najčastejšie nachádzam</h2>
+    <p class="lead">Čísla sú zo skutočných auditov slovenských e-shopov z bývania a domácnosti.</p>
+    <div class="grid">
+      <div class="card"><div class="num warn">100 %</div><h3>produktov bez parametrov</h3><p>Materiál, rozmery či farbu majú v popise, ale nie vo feede. Heureka podľa nich filtruje, takže produkt vo filtroch chýba.</p></div>
+      <div class="card"><div class="num warn">86 %</div><h3>produktov v starých kategóriách</h3><p>Heureka zmenila strom kategórií. Kategórie z feedu už nesedia a Heureka musí produkty zaraďovať sama.</p></div>
+      <div class="card"><div class="num warn">971</div><h3>duplicitných ID v jednom feede</h3><p>Heureka vyžaduje jedinečné ID. Duplicitné produkty môže prepísať alebo vyradiť.</p></div>
+      <div class="card"><div class="num warn">7 447</div><h3>produktov bez popisu</h3><p>Aj názvy typu „Eglo 86811“, z ktorých zákazník nevyčíta, čo kupuje.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Príklad úpravy</h2>
+    <p class="lead">Nič si nevymýšľam. Pracujem len s údajmi, ktoré už máte vo feede alebo na stránke produktu.</p>
+    <div class="card">
+      <div class="ba">
+        <div class="before"><b>Teraz vo feede</b>Červené zamatové vianočné ozdoby kabelky 9cm 2ks<br><span class="tag">Žiadne parametre</span><span class="tag">Maďarský text v popise</span><span class="tag">Stará kategória</span></div>
+        <div class="after"><b>Po úprave</b>Červené zamatové vianočné ozdoby kabelky 9 cm 2 ks<br><span class="tag">Materiál: plast, zamat</span><span class="tag">Výška: 9 cm</span><span class="tag">Šírka: 8 cm</span><span class="tag">Počet kusov: 2 ks</span><span class="tag">Kategória: Vianočné ozdoby</span></div>
+      </div>
+      <p class="small" style="margin-top:14px">Skóre produktu v audite: 80 → 96 zo 100.</p>
+    </div>
+  </section>
+
+  <section id="ako">
+    <h2>Ako to funguje</h2>
+    <p class="lead">Všetko prebieha písomne cez e-mail. Nič neinštalujete a nedávate mi prístup do e-shopu.</p>
+    <div class="steps">
+      <div class="step"><h3>Bezplatný audit</h3><p>Pošlete odkaz na feed. Do 24 hodín dostanete PDF so skóre, zoznamom problémov a ukážkou produktov pred úpravou a po nej.</p></div>
+      <div class="step"><h3>2 týždne zadarmo</h3><p>Upravím až 200 produktov. Dostanete tabuľku zmien na schválenie a opravený feed na vlastnej adrese.</p></div>
+      <div class="step"><h3>Rozhodnete sa</h3><p>Pokračujete mesačne, alebo v Heureke vrátite pôvodný feed. Všetky úpravy vám ostanú v tabuľke.</p></div>
+    </div>
+  </section>
+
+  <section id="cena">
+    <h2>Cena</h2>
+    <p class="lead">Mesačne, bez viazanosti, s výpoveďou ku koncu mesiaca. Cena závisí od veľkosti katalógu.</p>
+    <table>
+      <tr><th>Katalóg</th><th>Čo je v cene</th><th>Mesačne</th></tr>
+      <tr><td>do 500 produktov</td><td>celý katalóg, nové produkty, mesačný report</td><td class="price">149 €</td></tr>
+      <tr><td>500 – 5 000 produktov</td><td>celý katalóg, nové produkty, mesačný report</td><td class="price">279 €</td></tr>
+      <tr><td>nad 5 000 produktov</td><td>celý katalóg, nové produkty, mesačný report</td><td class="price">449 €</td></tr>
+    </table>
+    <p class="small">Prví traja klienti majú prvých 6 mesiacov zakladajúcu cenu o 30 % nižšie.</p>
+  </section>
+
+  <section id="otazky">
+    <h2>Časté otázky</h2>
+    <details><summary>Musím niečo meniť v e-shope?</summary><p>Nie. Pracujem s vaším verejným feedom. Opravený feed beží na samostatnej adrese a ceny, dostupnosť aj obrázky sa každý deň automaticky preberajú z vášho pôvodného feedu. V Heureke len vymeníte adresu feedu.</p></details>
+    <details><summary>Čo ak sa mi úprava nebude páčiť?</summary><p>Každú zmenu vidíte v tabuľke skôr, než sa nasadí. Kedykoľvek môžete v Heureke vrátiť pôvodnú adresu feedu.</p></details>
+    <details><summary>Používate AI?</summary><p>Áno, na návrhy textov a kategórií. Každý výstup kontroluje človek a parametre beriem len z údajov, ktoré už máte. Nič si nevymýšľam.</p></details>
+    <details><summary>Nemám verejný feed. Dá sa to aj tak?</summary><p>Áno. Stačí mi poslať odkaz na feed, ktorý používate pre Heureku alebo Google Merchant.</p></details>
+  </section>
+
+  <section>
+    <div id="audit" class="cta">
+      <h2>Pozriem sa na váš feed zadarmo</h2>
+      <p>Pošlite mi e-mail s odkazom na váš feed pre Heureku alebo Google. Do 24 hodín dostanete audit v PDF, bez akéhokoľvek záväzku.</p>
+      <div class="mail">feedboost.sk@gmail.com</div>
+      <div class="actions">
+        <button class="btn" id="copy" type="button">Skopírovať e-mail</button>
+        <a class="btn ghost" href="https://mail.google.com/mail/?view=cm&fs=1&to=feedboost.sk@gmail.com&su=Bezplatn%C3%BD%20audit%20feedu&body=Dobr%C3%BD%20de%C5%88%2C%0A%0Aodkaz%20na%20n%C3%A1%C5%A1%20Heureka%20feed%3A%20%0AE-shop%3A%20%0A%0A%C4%8Eakujem" target="_blank" rel="noopener">Napísať cez Gmail</a>
+      </div>
+      <div class="small" id="copied" aria-live="polite"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Tomáš Klein · <a href="mailto:feedboost.sk@gmail.com">feedboost.sk@gmail.com</a><br>
+  Úprava produktových feedov pre Heureku a Google · Slovensko
+</footer>
+<script>
+document.getElementById('copy').addEventListener('click',function(){
+  var t='feedboost.sk@gmail.com', m=document.getElementById('copied');
+  function ok(){m.textContent='E-mail skopírovaný – vložte ho do svojej pošty.';}
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(ok,function(){m.textContent=t;});}
+  else{m.textContent=t;}
+});
+</script>
+</body>
+</html>
